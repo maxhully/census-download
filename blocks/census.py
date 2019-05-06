@@ -3,7 +3,6 @@ import multiprocessing
 import geopandas
 import pandas
 import requests
-from tqdm import tqdm
 
 variables = [
     # pop
@@ -97,10 +96,16 @@ def block_geometries_url(state_fips, year=2010):
     )
 
 
-def blocks_for_state(state_fips):
+def blocks_for_state(state_fips, output_file=None):
+    if output_file is None:
+        output_file = f"{state_fips}.shp"
+
     url = block_geometries_url(state_fips)
     gdf = geopandas.read_file(url)
+
     data = block_data_for_state(state_fips)
+
     data.set_index("geoid", inplace=True)
     gdf.set_index("GEOID10", inplace=True, drop=False)
+
     return gdf.join(data)
