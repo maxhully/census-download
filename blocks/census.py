@@ -56,35 +56,41 @@ def counties(state_fips):
         "https://api.census.gov/data/2010/dec/sf1"
         "?get=NAME&for=county:*&in=state:{}".format(state_fips)
     )
+    assert resp.ok
     header, *rows = resp.json()
     county_column_index = header.index("county")
     county_fips_codes = set(row[county_column_index] for row in rows)
     return county_fips_codes
 
 
-def block_data_for_county(state_fips, county_fips, variables=variables, keys=keys):
+def data_for_county(
+    state_fips, county_fips, units="block", variables=variables, keys=keys
+):
     url = (
         "https://api.census.gov/data/2010/dec/sf1"
-        + "?get={},NAME&for=block:*".format(",".join(variables))
+        + "?get={},NAME&for={}:*".format(
+            ",".join(variables), requests.utils.quote(units)
+        )
         + "&in=state:{}&in=county:{}&in=tract:*".format(state_fips, county_fips)
     )
+    print(url)
     resp = requests.get(url)
     header, *rows = resp.json()
     variable_lookup = dict(zip(variables, keys))
     columns = [variable_lookup.get(column_name, column_name) for column_name in header]
     dtypes = {key: int for key in keys}
-    dtypes.update({key: str for key in ["state", "county", "tract", "block"]})
+    dtypes.update({key: str for key in ["state", "county", "tract", units]})
     data = pandas.DataFrame.from_records(rows, columns=columns).astype(dtypes)
-    data["geoid"] = data["state"] + data["county"] + data["tract"] + data["block"]
+    data["geoid"] = data["state"] + data["county"] + data["tract"] + data[units]
     return data
 
 
-def block_data_for_state(state_fips):
+def data_for_state(state_fips, units="block"):
     county_fips_codes = counties(state_fips)
     with multiprocessing.Pool(8) as p:
         county_data = p.starmap(
-            block_data_for_county,
-            [(state_fips, county_fips) for county_fips in county_fips_codes],
+            data_for_county,
+            [(state_fips, county_fips, units) for county_fips in county_fips_codes],
         )
     return pandas.concat(county_data)
 
@@ -103,7 +109,7 @@ def blocks_for_state(state_fips, output_file=None):
     url = block_geometries_url(state_fips)
     gdf = geopandas.read_file(url)
 
-    data = block_data_for_state(state_fips)
+    data = data_for_state(state_fips, "block")
 
     data.set_index("geoid", inplace=True)
     gdf.set_index("GEOID10", inplace=True, drop=False)

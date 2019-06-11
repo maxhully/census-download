@@ -1,0 +1,64 @@
+State                  Is Connected
+--------------------   ------------
+Alabama                True
+Alaska                 False
+Arizona                True
+Arkansas               True
+California             False
+Colorado               True
+Connecticut            True
+Delaware               True
+District of Columbia   True
+Florida                False
+Georgia                True
+Hawaii                 False
+Idaho                  True
+Illinois               True
+Indiana                True
+Iowa                   True
+Kansas                 True
+Kentucky               True
+Louisiana              True
+Maine                  True
+Maryland               True
+Massachusetts          True
+Michigan               True
+Minnesota              True
+Mississippi            True
+Missouri               True
+Montana                True
+Nebraska               True
+Nevada                 True
+New Hampshire          True
+New Jersey             True
+New Mexico             True
+New York               False
+North Carolina         True
+Ohio                   True
+Oklahoma               True
+Oregon                 True
+Rhode Island           False
+Pennsylvania           Error
+South Carolina         True
+South Dakota           True
+Tennessee              True
+Texas                  True
+Utah                   True
+Vermont                True
+Virginia               True
+Washington             True
+West Virginia          True
+Wisconsin              True
+
+False:
+Alaska, California, Florida, Hawaii, New York, Rhode Island
+
+Error:
+Pennsylvania
+
+TODO
+----
+
+- Use Census API to get variables for block groups.
+- Make all the graphs with the data joined.
+- Investigate islands, add edge(s) if needed?
