@@ -4,7 +4,7 @@ import uuid
 import us
 import sys
 
-from .census import block_data_for_state, block_geometries_url
+from .census import data_for_state, block_geometries_url
 
 
 from optparse import OptionParser
@@ -35,7 +35,7 @@ def main(state_fips, year=2010, output_file=None):
         gdf = geopandas.read_file(url)
     printer.good("Success!")
     with printer.loading("Downloading data..."):
-        data = block_data_for_state(state_fips)
+        data = data_for_state(state_fips)
     printer.good("Success!")
 
     data.set_index("geoid", inplace=True)

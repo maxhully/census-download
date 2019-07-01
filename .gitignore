@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+block_data/
+states/
+bg_data/
+
 # Distribution / packaging
 .Python
 env/

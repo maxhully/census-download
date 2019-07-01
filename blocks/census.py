@@ -32,9 +32,9 @@ keys = [
     "TOTPOP",
     "NH_WHITE",
     "NH_BLACK",
-    "NH_AMIN ",
+    "NH_AMIN",
     "NH_ASIAN",
-    "NH_NHPI ",
+    "NH_NHPI",
     "NH_OTHER",
     "NH_2MORE",
     "HISP",
@@ -53,8 +53,10 @@ keys = [
 
 def counties(state_fips):
     resp = requests.get(
-        "https://api.census.gov/data/2010/dec/sf1"
-        "?get=NAME&for=county:*&in=state:{}".format(state_fips)
+        "http://api.census.gov/data/2010/dec/sf1"
+        "?get=NAME&for=county:*&in=state:{}&key={}".format(
+            state_fips, "b3ea32a62428162150396ef79103b5e1b0ddf17a"
+        )
     )
     assert resp.ok
     header, *rows = resp.json()
@@ -67,13 +69,14 @@ def data_for_county(
     state_fips, county_fips, units="block", variables=variables, keys=keys
 ):
     url = (
-        "https://api.census.gov/data/2010/dec/sf1"
+        "http://api.census.gov/data/2010/dec/sf1"
         + "?get={},NAME&for={}:*".format(
             ",".join(variables), requests.utils.quote(units)
         )
-        + "&in=state:{}&in=county:{}&in=tract:*".format(state_fips, county_fips)
+        + "&in=state:{}&in=county:{}&in=tract:*&key={}".format(
+            state_fips, county_fips, "b3ea32a62428162150396ef79103b5e1b0ddf17a"
+        )
     )
-    print(url)
     resp = requests.get(url)
     header, *rows = resp.json()
     variable_lookup = dict(zip(variables, keys))
@@ -97,7 +100,7 @@ def data_for_state(state_fips, units="block"):
 
 def block_geometries_url(state_fips, year=2010):
     return (
-        f"https://www2.census.gov/geo/tiger/TIGER{year}/TABBLOCK/{year}/"
+        f"http://www2.census.gov/geo/tiger/TIGER{year}/TABBLOCK/{year}/"
         f"tl_{year}_{state_fips}_tabblock10.zip"
     )
 
